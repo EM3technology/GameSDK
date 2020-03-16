@@ -1,6 +1,6 @@
 # GameSDK
 em3 game sdk
-[![Jitpack](https://jitpack.io/#mafanwei/GameSDK.svg)](https://jitpack.io/#mafanwei/GameSDK)
+[![Jitpack](https://jitpack.io/v/mafanwei/GameSDK.svg)](https://jitpack.io/#mafanwei/GameSDK)
 
 ## Quick Start
 
