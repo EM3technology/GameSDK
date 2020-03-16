@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        GameSDK.unregisterCallback();
         GameSDK.releaseIMU();
     }
 
