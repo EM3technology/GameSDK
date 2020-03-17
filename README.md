@@ -24,11 +24,11 @@ dependencies {
 }
 ```
 ## Usage
-**1.** Init library in your application:
+**1.1** Init library in your application:
 ```java
  GameSDK.init(this);
  ```
- **1.2** implements GameSDK.IMUCallBack in your Activity:
+ **1.2** implements ```GameSDK.IMUCallBack``` in your Activity:
  ```java
  public class ... extends ... implements GameSDK.IMUCallBack {
     @Override
@@ -93,3 +93,31 @@ but notice, It's not release ```IMUManager```. It's just like a pause. You also 
 GameSDK.openIMU();
 ```
 to reopen it.
+
+## Other
+now it's fake 6dof,here is usage:
+ **1.1** implements ```Fake6DofManager.QuaternionListener``` in your Activity:
+ ```java
+ public class ... extends ... implements Fake6DofManager.QuaternionListener {
+    @Override
+    public void quaternionChanged(float[] data) {
+       //do something.
+    }
+ }
+ ```
+ **1.2** Register callback in this Activity:
+ ```java
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ...
+        GameSDK.set6DofListener(this);
+        ...
+    }
+```
+**1.3** When you need data, call this method:
+```java
+ GameSDK.callFake6DofListener();//Always returns {0.0,0.0,0.0,0.0}
+```
+All Done！
+## Screenshot
