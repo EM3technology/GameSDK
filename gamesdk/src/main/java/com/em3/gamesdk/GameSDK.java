@@ -14,6 +14,7 @@ public class GameSDK {
     private static GameSDK gameSDK;
     private static IMUManager imuManager;
     private static IMUManager.IMUDataListener imuDataListener;
+    private static Fake6DofManager.QuaternionListener fakeListener;
     private static int[] imuData = {0, 0, 0, 0, 0, 0};
     private static IMUCallBack imuCallBack;
 
@@ -107,6 +108,15 @@ public class GameSDK {
 
     public static void unregisterReceiver() {
         imuManager.unregisterReceiver();
+    }
+
+    public static void set6DofListener(Fake6DofManager.QuaternionListener quaternionListener) {
+        fakeListener = quaternionListener;
+        Fake6DofManager.setQuaternionListener(fakeListener);
+    }
+
+    public static void callFake6DofListener() {
+        Fake6DofManager.callListener();
     }
 
 }
