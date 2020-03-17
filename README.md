@@ -96,6 +96,7 @@ to reopen it.
 
 ## Other
 now it's fake 6dof,here is usage:
+
  **1.1** implements ```Fake6DofManager.QuaternionListener``` in your Activity:
  ```java
  public class ... extends ... implements Fake6DofManager.QuaternionListener {
@@ -121,3 +122,10 @@ now it's fake 6dof,here is usage:
 ```
 All Done！
 ## Screenshot
+here is 6Dof:
+
+![6Dof](https://raw.githubusercontent.com/mafanwei/GameSDK/master/screenshot/6dof.png)
+
+here is IMU:
+
+![imu](https://raw.githubusercontent.com/mafanwei/GameSDK/master/screenshot/imu.png)
