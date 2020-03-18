@@ -5,12 +5,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.em3.gamesdk.Fake6DofManager;
 import com.em3.gamesdk.GameSDK;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBack, Fake6DofManager.QuaternionListener {
+public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBack {
 
     private TextView textView;
     @Override
@@ -18,18 +17,11 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         GameSDK.registerCallback(this);
-        GameSDK.set6DofListener(this);
         textView = findViewById(R.id.tv);
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GameSDK.openIMU();
-            }
-        });
-        findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameSDK.callFake6DofListener();
             }
         });
     }
@@ -70,12 +62,4 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
 
     }
 
-    @Override
-    public void quaternionChanged(float[] data) {
-        String s = "";
-        for (int i = 0; i < data.length; i++) {
-            s = s + data[i] + " ";
-        }
-        Log.d("quaternionChanged:::",s);
-    }
 }

@@ -1,6 +1,7 @@
 package com.em3.gamesdk;
 
 import android.content.Context;
+import android.renderscript.Matrix4f;
 import android.util.Log;
 
 import static com.em3.gamesdk.Constant.DEBUG;
@@ -14,7 +15,6 @@ public class GameSDK {
     private static GameSDK gameSDK;
     private static IMUManager imuManager;
     private static IMUManager.IMUDataListener imuDataListener;
-    private static Fake6DofManager.QuaternionListener fakeListener;
     private static int[] imuData = {0, 0, 0, 0, 0, 0};
     private static IMUCallBack imuCallBack;
 
@@ -45,7 +45,7 @@ public class GameSDK {
     private static boolean check(byte[] data) {
         String s = "";
         int i = 0;
-        for (i = 0; i < data.length; i++) {
+        for (; i < data.length; i++) {
             s = s + data[i] + " ";
 
         }
@@ -55,13 +55,12 @@ public class GameSDK {
             return false;
         }
 
-        for (i = 0; i < 6; i++) {
-            //imuData[i] = toSignedInt(data, 2 + i * 4, 4);
-            imuData[i] = toSignedInt(new String(data, 2 + i * 4, 4));
+        for (i = 0; i < 3; i++) {
+            imuData[i] = toSignedInt(new String(data, 2 + i * 4, 4)) * 10 / (32768 / 16);
         }
 
-        for (i = 0; i < 3; i++) {
-            imuData[i] = imuData[i] * 10 / (32768 / 16);
+        for (; i < 6; i++) {
+            imuData[i] = new Integer(toInt(new String(data, 2 + i * 4, 4)) * 2000 / 32768).shortValue();
         }
 
         int flag = toInt(new String(data, 26, 2));
@@ -110,13 +109,34 @@ public class GameSDK {
         imuManager.unregisterReceiver();
     }
 
-    public static void set6DofListener(Fake6DofManager.QuaternionListener quaternionListener) {
-        fakeListener = quaternionListener;
-        Fake6DofManager.setQuaternionListener(fakeListener);
+    public static Matrix4f getProjectionMatrix4f() {
+        Matrix4f matrix4f = new Matrix4f();
+        matrix4f.loadIdentity();
+        return matrix4f;
     }
 
-    public static void callFake6DofListener() {
-        Fake6DofManager.callListener();
+    public static float getEyeFov(Constant.Eye eye) {
+        return 100;
+    }
+
+    public static PoseBean getLeftHand6Dof() {
+        return new PoseBean();
+    }
+
+    public static PoseBean getRightHand6Dof() {
+        return new PoseBean();
+    }
+
+    public static PoseBean getEyePoseFromHead(Constant.Eye eye) {
+        return new PoseBean();
+    }
+
+    public static Matrix4f getEyePoseFromHeadMat(Constant.Eye eye) {
+        return getProjectionMatrix4f();
+    }
+
+    public static PoseBean getHeadPosePredictied(int predictMs) {
+        return new PoseBean();
     }
 
 }
