@@ -56,7 +56,7 @@ import static com.em3.gamesdk.Constant.DEBUG;
         }
 
         for (i = 0; i < 3; i++) {
-            imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (32768.0 / 20.0));
+            imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (32768.0 / 80.0));
         }
 
        /* for (; i < 6; i++) {

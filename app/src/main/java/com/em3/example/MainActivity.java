@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
             @Override
             public void run() {
                String text = textView.getText().toString();
-               if(text.length() > 2000) {
-                   text = text.substring(text.length() - 2000);
+               if(text.length() > 3000) {
+                   text = text.substring(0, 3000);
                }
                text = finalS + text;
                textView.setText(text);
