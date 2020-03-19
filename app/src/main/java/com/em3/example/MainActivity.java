@@ -46,17 +46,22 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
     }
 
     @Override
-    public void IMUChanged(int[] data) {
+    public void IMUChanged(float[] data) {
         String s = "";
-        for (int i = 0; i < data.length; i++) {
-            s = s + data[i] + " ";
+        for (int i = 0; i < 6; i++) {
+            s = s + data[i] + "   ";
         }
         Log.d("IMUChanged::::", s);
         final String finalS = s;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                textView.append(finalS);
+               String text = textView.getText().toString();
+               if(text.length() > 2000) {
+                   text = text.substring(text.length() - 2000);
+               }
+               text = finalS + text;
+               textView.setText(text);
             }
         });
 

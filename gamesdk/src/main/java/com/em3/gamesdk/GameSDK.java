@@ -15,11 +15,11 @@ import static com.em3.gamesdk.Constant.DEBUG;
     private static GameSDK gameSDK;
     private static IMUManager imuManager;
     private static IMUManager.IMUDataListener imuDataListener;
-    private static int[] imuData = {0, 0, 0, 0, 0, 0};
+    private static float[] imuData = {0, 0, 0, 0, 0, 0};
     private static IMUCallBack imuCallBack;
 
     public static interface IMUCallBack {
-        public void IMUChanged(int[] data);
+        public void IMUChanged(float[] data);
     }
 
     private GameSDK() {
@@ -56,11 +56,15 @@ import static com.em3.gamesdk.Constant.DEBUG;
         }
 
         for (i = 0; i < 3; i++) {
-            imuData[i] = toSignedInt(new String(data, 2 + i * 4, 4)) * 10 / (32768 / 16);
+            imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (32768.0 / 20.0));
         }
 
-        for (; i < 6; i++) {
+       /* for (; i < 6; i++) {
             imuData[i] = new Integer(toInt(new String(data, 2 + i * 4, 4)) * 2000 / 32768).shortValue();
+        }*/
+
+        for (; i < 6; i++) {
+            imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (16.384 * 57.30));
         }
 
         int flag = toInt(new String(data, 26, 2));
