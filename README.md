@@ -95,37 +95,19 @@ GameSDK.openIMU();
 to reopen it.
 
 ## Other
-now it's fake 6dof,here is usage:
-
- **1.1** implements ```Fake6DofManager.QuaternionListener``` in your Activity:
- ```java
- public class ... extends ... implements Fake6DofManager.QuaternionListener {
-    @Override
-    public void quaternionChanged(float[] data) {
-       //do something.
-    }
- }
- ```
- **1.2** Register callback in this Activity:
- ```java
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ...
-        GameSDK.set6DofListener(this);
-        ...
-    }
-```
-**1.3** When you need data, call this method:
+Now it's fake 6dof, here is 6Dof api:
 ```java
- GameSDK.callFake6DofListener();//Always returns {0.0,0.0,0.0,0.0}
+GameSDK.getProjectionMatrix4f(); //return Matrix(4 * 4): fov，ratio，near，far
+GameSDK.getEyeFov(eye); //return eye fov.
+GameSDK.getLeftHand6Dof(); //return left hand 6Dof.
+GameSDK.getRightHand6Dof(); //return right hand 6Dof.
+GameSDK.getEyePoseFromHead(eye); //return the relative position and rotation of an eye
+GameSDK.getEyePoseFromHeadMat(eye); //return the transformation matrix of the opposite head of an eye (4 * 4)
+GameSDK.getHeadPosePredictied(ms); //return predict head 6Dof pose after given ms.
 ```
+
 All Done！
 ## Screenshot
-here is 6Dof:
-
-![6Dof](https://raw.githubusercontent.com/mafanwei/GameSDK/master/screenshot/6dof.png)
-
 here is IMU:
 
 ![imu](https://raw.githubusercontent.com/mafanwei/GameSDK/master/screenshot/imu.png)
