@@ -97,7 +97,8 @@ to reopen it.
 ## Other
 Now it's fake 6dof, here is 6Dof api:
 ```java
-GameSDK.getEyeFov(eye); //return eye FOV.
+GameSDK.getProjectionMatrix4f(); //return Matrix(4 * 4): fov，ratio，near，far
+GameSDK.getEyeFov(eye); //return eye fov.
 GameSDK.getLeftHand6Dof(); //return left hand 6Dof.
 GameSDK.getRightHand6Dof(); //return right hand 6Dof.
 GameSDK.getEyePoseFromHead(eye); //return the relative position and rotation of an eye
