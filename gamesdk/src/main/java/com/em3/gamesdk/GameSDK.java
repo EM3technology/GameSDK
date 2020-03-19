@@ -9,7 +9,7 @@ import static com.em3.gamesdk.Constant.DEBUG;
 /**
  * Created by MaFanwei on 2020/3/16.
  */
-public class GameSDK {
+    public class GameSDK {
 
     private static Context mContext;
     private static GameSDK gameSDK;
@@ -109,9 +109,15 @@ public class GameSDK {
         imuManager.unregisterReceiver();
     }
 
-    public static Matrix4f getProjectionMatrix4f() {
+    private static Matrix4f getIdentity() {
         Matrix4f matrix4f = new Matrix4f();
         matrix4f.loadIdentity();
+        return matrix4f;
+    }
+
+    public static Matrix4f getProjectionMatrix4f() {
+        Matrix4f matrix4f = getIdentity();
+        matrix4f.set(0,0,100);
         return matrix4f;
     }
 
@@ -132,7 +138,7 @@ public class GameSDK {
     }
 
     public static Matrix4f getEyePoseFromHeadMat(Constant.Eye eye) {
-        return getProjectionMatrix4f();
+        return getIdentity();
     }
 
     public static PoseBean getHeadPosePredictied(int predictMs) {
