@@ -32,9 +32,11 @@ dependencies {
  ```java
  public class ... extends ... implements GameSDK.IMUCallBack {
     @Override
-    public void IMUChanged(int[] data) {
+    public void IMUChanged(float[] data) {
       //6 data, including x, y, z acceleration and x, y, z angular velocity. The sequence is as follows:
       //acc_x , acc_y , acc_z , gyro_x , gyro_y , gyro_z
+      //acc unit is m/s2
+      //gyro unit is rad/s
     }
  }
  ```
