@@ -107,7 +107,19 @@ GameSDK.getEyePoseFromHead(eye); //return the relative position and rotation of 
 GameSDK.getEyePoseFromHeadMat(eye); //return the transformation matrix of the opposite head of an eye (4 * 4)
 GameSDK.getHeadPosePredictied(ms); //return predict head 6Dof pose after given ms.
 ```
-
+Since version 0.0.6, you can hide unnecessary logs:
+```java
+GameSDK.hideLog();
+```
+## Brightness
+You can change the brightness with the following code:
+```java
+GameSDK.changeBrightness(brightness); //range 0-511
+```
+And read brightness :
+```java
+GameSDK.getBrightness();
+```
 All Done！
 ## Screenshot
 here is IMU:
