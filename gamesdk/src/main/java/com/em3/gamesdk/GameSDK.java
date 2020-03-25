@@ -4,19 +4,25 @@ import android.content.Context;
 import android.renderscript.Matrix4f;
 import android.util.Log;
 
+import com.hoho.android.usbserial.driver.UsbSerialPort;
+
+import java.io.IOException;
+
 import static com.em3.gamesdk.Constant.DEBUG;
+import static com.em3.gamesdk.Constant.TAG;
 
 /**
  * Created by MaFanwei on 2020/3/16.
  */
-    public class GameSDK {
+public class GameSDK {
 
     private static Context mContext;
     private static GameSDK gameSDK;
     private static IMUManager imuManager;
     private static IMUManager.IMUDataListener imuDataListener;
-    private static float[] imuData = {0, 0, 0, 0, 0, 0};
+    private static float[] imuData = {0, 0, 0, 0, 0, 0, Constant.NO_BRIGHTNESS, 0, 0};
     private static IMUCallBack imuCallBack;
+    private static int brightness = Constant.NO_BRIGHTNESS;
 
     public static interface IMUCallBack {
         public void IMUChanged(float[] data);
@@ -30,28 +36,28 @@ import static com.em3.gamesdk.Constant.DEBUG;
         imuDataListener = new IMUManager.IMUDataListener() {
             @Override
             public void getIMUData(byte[] data) {
-                if (check(data)) {
+                if (checkAndSet(data)) {
                     if (imuCallBack != null)
                         imuCallBack.IMUChanged(imuData);
                 } else {
                     if (DEBUG)
-                        Log.w(Constant.TAG, "data not pass check. ignore");
+                        Log.w(TAG, "data not pass checkAndSet. ignore");
                 }
             }
         };
         imuManager = new IMUManager(context, imuDataListener, 0);
     }
 
-    private static boolean check(byte[] data) {
+    private static boolean checkAndSet(byte[] data) {
         String s = "";
         int i = 0;
         for (; i < data.length; i++) {
             s = s + data[i] + " ";
 
         }
-        if (data.length != 30) {
+        if (data.length != 42) {
             if (DEBUG)
-                Log.w(Constant.TAG, "data is not normal length:" + data.length);
+                Log.w(TAG, "data is not normal length:" + data.length + " update imu or you should use old version");
             return false;
         }
 
@@ -59,15 +65,17 @@ import static com.em3.gamesdk.Constant.DEBUG;
             imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (32768.0 / 80.0));
         }
 
-       /* for (; i < 6; i++) {
-            imuData[i] = new Integer(toInt(new String(data, 2 + i * 4, 4)) * 2000 / 32768).shortValue();
-        }*/
-
         for (; i < 6; i++) {
             imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (16.384 * 57.30));
         }
 
-        int flag = toInt(new String(data, 26, 2));
+        //other data
+        for (; i < imuData.length; i++) {
+            imuData[i] = toInt(new String(data, 2 + i * 4, 4));
+        }
+
+        brightness = (int) imuData[6];
+        int flag = toInt(new String(data, data.length - 4, 2));
         int result = 0;
         for (i = 0; i < imuData.length * 2; i++) {
             result += toInt(new String(data, 2 + i * 2, 2));
@@ -77,7 +85,6 @@ import static com.em3.gamesdk.Constant.DEBUG;
 
     private static int toSignedInt(String s) {
         return (Integer.valueOf(s, 16).shortValue());
-        // return Integer.parseInt(s,16) & 0x0FFFF;
     }
 
     public static int toInt(String s) {
@@ -121,7 +128,7 @@ import static com.em3.gamesdk.Constant.DEBUG;
 
     public static Matrix4f getProjectionMatrix4f() {
         Matrix4f matrix4f = getIdentity();
-        matrix4f.set(0,0,100);
+        matrix4f.set(0, 0, 100);
         return matrix4f;
     }
 
@@ -149,4 +156,38 @@ import static com.em3.gamesdk.Constant.DEBUG;
         return new PoseBean();
     }
 
+    public static boolean changeBrightness(String brightness) {
+        try {
+            UsbSerialPort port = imuManager.getPort();
+            if (port == null) {
+                Log.w(TAG, "have you open device?");
+                return false;
+            } else {
+                int value = Integer.parseInt(brightness);
+                if (value >= 0 && value <= 511) {
+                    String cmd = "brightnessset " + brightness;
+                    port.write(cmd.getBytes(), 0);
+                    return true;
+                } else {
+                    Log.w(TAG, "brightness must in 0~511");
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "change brightness IOException:" + e.getMessage());
+            return false;
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "brightness must be Integer!!");
+            return false;
+        }
+    }
+
+    public static void hideLog(boolean needHide) {
+        DEBUG = needHide;
+    }
+
+    public static int getBrightness() {
+        return brightness;
+    }
 }

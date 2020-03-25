@@ -160,4 +160,8 @@ public class IMUManager {
         }
     }
 
+    public UsbSerialPort getPort() {
+        return sPort;
+    }
+
 }
