@@ -60,6 +60,9 @@ public class GameSDK {
                 Log.w(TAG, "data is not normal length:" + data.length + " update imu or you should use old version");
             return false;
         }
+        for(int j = 0;j<data.length;j++) {
+            Log.w("asdasdasd"+j,data[j]+"");
+        }
 
         imuData = new float[(data.length - 2) / 4 - 1];
 
@@ -79,7 +82,7 @@ public class GameSDK {
 
         //3DOF
         for (; i < 10; i++) {
-            imuData[i] = (float) (toInt(new String(data, 2 + i * 4, 4)) / 10000.0);
+            imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / 10000.0);
         }
 
         //other data
