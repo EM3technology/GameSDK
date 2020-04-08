@@ -20,7 +20,7 @@ public class GameSDK {
     private static GameSDK gameSDK;
     private static IMUManager imuManager;
     private static IMUManager.IMUDataListener imuDataListener;
-    private static float[] imuData = {0, 0, 0, 0, 0, 0, Constant.NO_BRIGHTNESS, 0, 0};
+    private static float[] imuData;
     private static IMUCallBack imuCallBack;
     private static int brightness = Constant.NO_BRIGHTNESS;
 
@@ -55,18 +55,31 @@ public class GameSDK {
             s = s + data[i] + " ";
 
         }
-        if (data.length != 42) {
+        if (data.length != 50) {
             if (DEBUG)
                 Log.w(TAG, "data is not normal length:" + data.length + " update imu or you should use old version");
             return false;
         }
 
+        imuData = new float[(data.length - 2) / 4 - 1];
+
+        //acc
         for (i = 0; i < 3; i++) {
             imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (32768.0 / 80.0));
         }
 
+        //gry
         for (; i < 6; i++) {
             imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / (16.384 * 57.30));
+        }
+
+        //bright
+        brightness = toInt(new String(data, 2 + i * 4, 4));
+        i++;
+
+        //3DOF
+        for (; i < 10; i++) {
+            imuData[i] = (float) (toInt(new String(data, 2 + i * 4, 4)) / 10000.0);
         }
 
         //other data
@@ -74,7 +87,6 @@ public class GameSDK {
             imuData[i] = toInt(new String(data, 2 + i * 4, 4));
         }
 
-        brightness = (int) imuData[6];
         int flag = toInt(new String(data, data.length - 4, 2));
         int result = 0;
         for (i = 0; i < imuData.length * 2; i++) {
