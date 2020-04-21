@@ -9,10 +9,11 @@ import android.widget.Toast;
 
 import com.em3.gamesdk.Constant;
 import com.em3.gamesdk.GameSDK;
+import com.em3.gamesdk.IMUSensorManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBack {
+public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBack, IMUSensorManager.SensorDataChangedListener {
 
     private TextView textView;
     private EditText editText;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         GameSDK.registerCallback(this);
+        GameSDK.setSensorDataChangedListener(this);
         textView = findViewById(R.id.tv);
         editText = findViewById(R.id.edt_brightness);
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
@@ -53,6 +55,14 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
                     }
                 });
 
+            }
+        });
+
+        findViewById(R.id.btn_reset_3dof).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               boolean b = GameSDK.reset3Dof();
+                Toast.makeText(MainActivity.this, "重置3dof："+b, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -97,4 +107,8 @@ public class MainActivity extends AppCompatActivity implements GameSDK.IMUCallBa
         });
     }
 
+    @Override
+    public void onSensorDataChanged(int light, int proximity) {
+        Log.d("onSensorDataChanged","light: "+light +" proximity: "+proximity);
+    }
 }

@@ -1,2 +1,2 @@
 include ':app', ':gamesdk'
-rootProject.name='Example'
+rootProject.name = 'Example'

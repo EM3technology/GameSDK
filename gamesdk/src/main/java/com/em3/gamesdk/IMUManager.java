@@ -123,7 +123,7 @@ public class IMUManager {
         sPort = driver.getPorts().get(0); // Most devices have just one port (port 0)
         try {
             sPort.open(connection);
-            sPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+            sPort.setParameters(230400, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
             startIoManager();
         } catch (Exception e) {
             e.printStackTrace();

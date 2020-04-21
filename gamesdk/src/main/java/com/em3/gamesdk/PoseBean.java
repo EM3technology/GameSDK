@@ -18,7 +18,7 @@ public class PoseBean {
         for (; i < pos.length; i++) {
             s = s + pos[i] + " ";
         }
-        s = s+"qua = ";
+        s = s + "qua = ";
         for (i = 0; i < qua.length; i++) {
             s = s + qua[i] + " ";
         }

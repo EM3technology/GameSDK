@@ -23,6 +23,9 @@ public class GameSDK {
     private static float[] imuData;
     private static IMUCallBack imuCallBack;
     private static int brightness = Constant.NO_BRIGHTNESS;
+    private static int sensorLight = Constant.NO_SENSOR_DATA;
+    private static int sensorProximity = Constant.NO_SENSOR_DATA;
+    private static IMUSensorManager imuSensorManager;
 
     public static interface IMUCallBack {
         public void IMUChanged(float[] data);
@@ -37,15 +40,17 @@ public class GameSDK {
             @Override
             public void getIMUData(byte[] data) {
                 if (checkAndSet(data)) {
+                    imuSensorManager.setNewSensorData(sensorLight, sensorProximity);
                     if (imuCallBack != null)
                         imuCallBack.IMUChanged(imuData);
                 } else {
                     if (DEBUG)
-                        Log.w(TAG, "data not pass checkAndSet. ignore");
+                        Log.w(TAG, "data not pass check. ignore");
                 }
             }
         };
         imuManager = new IMUManager(context, imuDataListener, 0);
+        imuSensorManager = new IMUSensorManager();
     }
 
     private static boolean checkAndSet(byte[] data) {
@@ -53,16 +58,14 @@ public class GameSDK {
         int i = 0;
         for (; i < data.length; i++) {
             s = s + data[i] + " ";
-
         }
         if (data.length != 50) {
             if (DEBUG)
                 Log.w(TAG, "data is not normal length:" + data.length + " update imu or you should use old version");
             return false;
         }
-        for(int j = 0;j<data.length;j++) {
-            Log.w("asdasdasd"+j,data[j]+"");
-        }
+
+        //Log.d("asdasdasd",new String(data));
 
         imuData = new float[(data.length - 2) / 4 - 1];
 
@@ -77,13 +80,18 @@ public class GameSDK {
         }
 
         //bright
-        brightness = toInt(new String(data, 2 + i * 4, 4));
+        brightness = toInt(new String(data, 2 + i * 4, 2));
+        //sensor light
+        sensorLight = toInt(new String(data, 4 + i * 4, 2));
         i++;
 
         //3DOF
         for (; i < 10; i++) {
             imuData[i] = (float) (toSignedInt(new String(data, 2 + i * 4, 4)) / 10000.0);
         }
+
+        //sensor proximity
+        sensorProximity = toInt(new String(data, 2 + i * 4, 2));
 
         //other data
         for (; i < imuData.length; i++) {
@@ -179,12 +187,12 @@ public class GameSDK {
                 return false;
             } else {
                 int value = Integer.parseInt(brightness);
-                if (value >= 0 && value <= 511) {
+                if (value >= 0 && value <= 255) {
                     String cmd = "brightnessset " + brightness;
                     port.write(cmd.getBytes(), 0);
                     return true;
                 } else {
-                    Log.w(TAG, "brightness must in 0~511");
+                    Log.w(TAG, "brightness must in 0~255");
                     return false;
                 }
             }
@@ -198,11 +206,41 @@ public class GameSDK {
         }
     }
 
+    public static boolean reset3Dof() {
+        try {
+            UsbSerialPort port = imuManager.getPort();
+            if (port == null) {
+                Log.w(TAG, "have you open device?");
+                return false;
+            } else {
+                String cmd = "reset3dof";
+                port.write(cmd.getBytes(), 0);
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "reset 3dof IOException:" + e.getMessage());
+            return false;
+        }
+    }
+
     public static void hideLog(boolean needHide) {
         DEBUG = needHide;
     }
 
+    public static void setSensorDataChangedListener(IMUSensorManager.SensorDataChangedListener sensorDataChangedListener) {
+        imuSensorManager.setSensorDataChangedListener(sensorDataChangedListener);
+    }
+
     public static int getBrightness() {
         return brightness;
+    }
+
+    public static int getSensorProximity() {
+        return sensorProximity;
+    }
+
+    public static int getSensorLight() {
+        return sensorLight;
     }
 }
