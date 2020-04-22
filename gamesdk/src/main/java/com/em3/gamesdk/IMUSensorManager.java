@@ -6,7 +6,7 @@ public class IMUSensorManager {
     private SensorDataChangedListener sensorDataChangedListener;
 
     public void setNewSensorData(int light, int proximity) {
-        if (sensorDataChangedListener != null && light != sensorLight || proximity != sensorProximity) {
+        if (sensorDataChangedListener != null && (light != sensorLight || proximity != sensorProximity)) {
             sensorLight = light;
             sensorProximity = proximity;
             sensorDataChangedListener.onSensorDataChanged(light, proximity);
